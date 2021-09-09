@@ -19,15 +19,10 @@ class FirestoreService(val firebaseFirestore : FirebaseFirestore) {
         firebaseFirestore.collection(USER_COLLECTION_NAME).document(user.username)
             .update("cryptosList", user.cryptosList)
             .addOnSuccessListener{
-                result ->
-                    if (callback != null){
-                        callback.onSuccess(user)
-                    }
+                callback?.onSuccess(user)
             }
             .addOnFailureListener { exception ->
-                if (callback != null) {
-                    callback.onFailed(exception)
-                }
+                callback?.onFailed(exception)
             }
     }
 
