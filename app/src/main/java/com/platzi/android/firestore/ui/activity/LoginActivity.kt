@@ -48,10 +48,26 @@ class LoginActivity : AppCompatActivity() {
             task ->
             if (task.isSuccessful){
                 val username = usernameEditText.text.toString()
-                val user = User()
-                user.username = username
-                saveUserAndStartMainActivity(user, view)
-                println("El usuario es: ${username}")
+                firestoreService.findUserById(username, object : Callback<User>{
+                    override fun onSuccess(result: User?) {
+                        if (result == null) {
+                            val user = User()
+                            user.username = username
+                            saveUserAndStartMainActivity(user, view)
+                            println("New user created whit name: ${user.username}")
+                        } else {
+                            startMainActivity(username)
+                            println("Hello again $username")
+                        }
+                    }
+
+                    override fun onFailed(exception: java.lang.Exception) {
+                        showErrorMessage(view)
+                    }
+
+                })
+
+                //println("El usuario es: ${username}")
             } else {
                 showErrorMessage(view)
                 view.isEnabled = true

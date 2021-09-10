@@ -7,9 +7,9 @@ import com.platzi.android.firestore.model.User
 const val CRYPTO_COLLECTION_NAME = "crytos"
 const val USER_COLLECTION_NAME = "users"
 
-class FirestoreService(val firebaseFirestore : FirebaseFirestore) {
+class FirestoreService(val firebaseFirestore: FirebaseFirestore) {
 
-    fun setDocument(data: Any, collectionName: String, id: String, callback: Callback<Void>){
+    fun setDocument(data: Any, collectionName: String, id: String, callback: Callback<Void>) {
         firebaseFirestore.collection(collectionName).document(id).set(data)
             .addOnSuccessListener { callback.onSuccess(null) }
             .addOnFailureListener { exception -> callback.onFailed(exception) }
@@ -18,7 +18,7 @@ class FirestoreService(val firebaseFirestore : FirebaseFirestore) {
     fun updateUser(user: User, callback: Callback<User>?) {
         firebaseFirestore.collection(USER_COLLECTION_NAME).document(user.username)
             .update("cryptosList", user.cryptosList)
-            .addOnSuccessListener{
+            .addOnSuccessListener {
                 callback?.onSuccess(user)
             }
             .addOnFailureListener { exception ->
@@ -26,8 +26,39 @@ class FirestoreService(val firebaseFirestore : FirebaseFirestore) {
             }
     }
 
-    fun updateCrypto(crypto: Crypto){
+    fun updateCrypto(crypto: Crypto) {
         firebaseFirestore.collection(CRYPTO_COLLECTION_NAME).document(crypto.getDocumentId())
             .update("available", crypto.available)
+    }
+
+    fun getCryptos(callback: Callback<List<Crypto>>?) {
+        firebaseFirestore.collection(CRYPTO_COLLECTION_NAME)
+            .get()
+            .addOnSuccessListener{ result ->
+                for(document in result) {
+                    val crytoList = result.toObjects(Crypto::class.java)
+                    callback?.onSuccess(crytoList)
+                    break
+                }
+            }
+            .addOnFailureListener { exception ->
+                callback?.onFailed(exception)
+            }
+
+    }
+
+
+    fun findUserById(id: String, callback: Callback<User>?){
+        firebaseFirestore.collection(USER_COLLECTION_NAME)
+            .document(id)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.data != null) {
+                    callback?.onSuccess(document.toObject(User::class.java))
+                } else {
+                    callback?.onSuccess(null)
+                }
+            }
+            .addOnFailureListener { exception -> callback?.onFailed(exception) }
     }
 }
