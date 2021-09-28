@@ -5,4 +5,11 @@
     <string name="app_icon">app icon</string>
     <string name="realtime_trader">Realtime Trader</string>
     <string name="error_while_connecting_to_the_server">sas</string>
+    <string name="buy">BUY</string>
+    <string name="action_settings">Settings</string>
+    <string name="name">Name</string>
+    <string name="generating_new_cryptos">Generating new cryptos...</string>
+    <string name="available_message">available %s</string>
+    <string name="coin_info">%s %s</string>
+    <string name="coin_icon">Coin icon</string>
 </resources>

@@ -4,7 +4,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.platzi.android.firestore.model.Crypto
 import com.platzi.android.firestore.model.User
 
-const val CRYPTO_COLLECTION_NAME = "crytos"
+const val CRYPTO_COLLECTION_NAME = "cryptos"
 const val USER_COLLECTION_NAME = "users"
 
 class FirestoreService(val firebaseFirestore: FirebaseFirestore) {
