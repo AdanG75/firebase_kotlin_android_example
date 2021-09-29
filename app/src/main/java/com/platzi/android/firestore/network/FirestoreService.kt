@@ -3,6 +3,7 @@ package com.platzi.android.firestore.network
 import com.google.firebase.firestore.FirebaseFirestore
 import com.platzi.android.firestore.model.Crypto
 import com.platzi.android.firestore.model.User
+import com.platzi.android.firestore.network.RealtimeDataListener
 
 const val CRYPTO_COLLECTION_NAME = "cryptos"
 const val USER_COLLECTION_NAME = "users"
@@ -60,5 +61,35 @@ class FirestoreService(val firebaseFirestore: FirebaseFirestore) {
                 }
             }
             .addOnFailureListener { exception -> callback?.onFailed(exception) }
+    }
+
+    //listener para cambios en cryptos
+    fun listenForUpdates(cryptos: List<Crypto>, listener:  RealtimeDataListener<Crypto>) {
+        val cryptoReference = firebaseFirestore.collection(CRYPTO_COLLECTION_NAME)
+        for(crypto in cryptos) {
+            cryptoReference.document(crypto.getDocumentId()).addSnapshotListener{ snapshot, e ->
+                if(e != null) {
+                    listener.onError(e)
+                }
+                if (snapshot != null && snapshot.exists()) {
+                    snapshot.toObject(Crypto::class.java)?.let { listener.onDataChange(it) }
+                }
+
+            }
+        }
+    }
+
+    //listenar para cambios en usuario
+    fun listenForUpdates(user: User, listener: RealtimeDataListener<User>) {
+        val userReference = firebaseFirestore.collection(USER_COLLECTION_NAME)
+
+        userReference.document(user.username).addSnapshotListener{ snapshot, e ->
+            if ( e !=  null) {
+                listener.onError(e)
+            }
+            if (snapshot != null && snapshot.exists()) {
+                snapshot.toObject(User::class.java)?.let { listener.onDataChange(it) }
+            }
+        }
     }
 }
